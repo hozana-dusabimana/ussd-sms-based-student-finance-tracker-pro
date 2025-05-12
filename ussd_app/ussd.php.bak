@@ -1,0 +1,75 @@
+<?php
+
+// Handle incoming USSD requests
+function handleUssdRequest($sessionId, $serviceCode, $phoneNumber, $text) {
+    $response = "";
+    
+    // Initialize session data
+    if (empty($text)) {
+        $response = "CON Welcome to Finance Tracker\n";
+        $response .= "1. Check Balance\n";
+        $response .= "2. Add Income\n";
+        $response .= "3. Add Expense\n";
+        $response .= "4. View Transactions\n";
+        $response .= "5. Exit";
+    } else {
+        // Handle user input
+        $level = explode("*", $text);
+        
+        switch ($level[0]) {
+            case 1: // Check Balance
+                $response = "END Your current balance is: KES 0.00";
+                break;
+            
+            case 2: // Add Income
+                if (count($level) == 1) {
+                    $response = "CON Enter income amount:\n";
+                } elseif (count($level) == 2) {
+                    $amount = $level[1];
+                    // TODO: Save income to database
+                    $response = "END Income of KES $amount has been recorded";
+                }
+                break;
+            
+            case 3: // Add Expense
+                if (count($level) == 1) {
+                    $response = "CON Enter expense amount:\n";
+                } elseif (count($level) == 2) {
+                    $amount = $level[1];
+                    // TODO: Save expense to database
+                    $response = "END Expense of KES $amount has been recorded";
+                }
+                break;
+            
+            case 4: // View Transactions
+                if (count($level) == 1) {
+                    $response = "CON Select period:\n";
+                    $response .= "1. Last 7 days\n";
+                    $response .= "2. Last 30 days\n";
+                    $response .= "3. Custom date range";
+                }
+                break;
+            
+            case 5: // Exit
+                $response = "END Thank you for using Finance Tracker";
+                break;
+            
+            default:
+                $response = "END Invalid option. Please try again.";
+        }
+    }
+    
+    return $response;
+}
+
+// Process incoming USSD request
+if (isset($_POST['sessionId']) && isset($_POST['serviceCode']) && 
+    isset($_POST['phoneNumber'])) {
+    
+    $sessionId = $_POST['sessionId'];
+    $serviceCode = $_POST['serviceCode'];
+    $phoneNumber = $_POST['phoneNumber'];
+    $text = $_POST['text'];
+    
+    echo handleUssdRequest($sessionId, $serviceCode, $phoneNumber, $text);
+}
