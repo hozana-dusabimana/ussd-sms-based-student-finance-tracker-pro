@@ -2,7 +2,7 @@
 
 <div style='margin-left:5%' x-data="{ sidebarOpen: false }" class="relative">
     <!-- Sidebar Toggle Button -->
-    <button @click="sidebarOpen = !sidebarOpen" class="fixed top-4 left-4 z-50 lg:hidden">
+    <button @click="sidebarOpen = !sidebarOpen" class="fixed top-4 left-4 z-50">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
         </svg>
@@ -24,7 +24,7 @@
          class="fixed inset-y-0 left-0 z-30 w-64 transform overflow-y-auto bg-white border-r border-gray-200 lg:translate-x-0 lg:static lg:inset-0">
         
         <div class="flex items-center justify-center h-16 bg-white border-b border-gray-200">
-            <h2 class="text-2xl font-semibold text-gray-800">Finance Tracker</h2>
+            <h2 class="text-2xl font-semibold text-gray-800">Student Finance Tracker</h2>
         </div>
 
         <nav class="mt-6">
