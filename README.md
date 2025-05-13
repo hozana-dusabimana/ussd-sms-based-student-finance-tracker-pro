@@ -2,6 +2,9 @@
 
 A comprehensive USSD-based finance tracking application that allows users to manage their income, expenses, and track their financial transactions through a simple USSD interface. The application also includes SMS notifications for important financial activities.
 
+## Ensure to get the php laravel 
+Clone it on branch main-php-project on this link https://github.com/hozana-dusabimana/ussd-sms-based-student-finance-tracker-pro/tree/main-php-project
+
 ## Features
 
 ### User Management
