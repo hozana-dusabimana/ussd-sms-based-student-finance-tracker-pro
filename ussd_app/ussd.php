@@ -194,32 +194,6 @@ function testSMS($phoneNumber) {
     }
 }
 
-// Input validation functions
-function validatePhoneNumber($phone) {
-    // Remove any non-digit characters
-    $phone = preg_replace('/[^0-9]/', '', $phone);
-    
-    // Check if it's a valid Rwandan number (10-12 digits starting with 250 or 0)
-    if (preg_match('/^(250|0)[0-9]{9}$/', $phone)) {
-        return true;
-    }
-    return false;
-}
-
-function validateEmail($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-}
-
-function validateName($name) {
-    // Allow letters, spaces, and basic punctuation, 2-50 characters
-    return preg_match('/^[a-zA-Z\s\'-]{2,50}$/', $name);
-}
-
-function validateAmount($amount) {
-    // Must be a positive number with up to 2 decimal places
-    return preg_match('/^\d+(\.\d{1,2})?$/', $amount) && floatval($amount) > 0;
-}
-
 // Handle incoming USSD requests
 function handleUssdRequest($sessionId, $serviceCode, $phoneNumber, $text) {
     $response = "";
@@ -268,35 +242,27 @@ function handleUssdRequest($sessionId, $serviceCode, $phoneNumber, $text) {
                 if (count($level) == 1) {
                     $response = "CON Enter your name:";
                 } elseif (count($level) == 2) {
-                    if (!validateName($level[1])) {
-                        $response = "END Invalid name format. Please use only letters, spaces, and basic punctuation (2-50 characters).";
-                    } else {
-                        $response = "CON Enter your email:";
-                    }
+                    $response = "CON Enter your email:";
                 } elseif (count($level) == 3) {
-                    if (!validateEmail($level[2])) {
-                        $response = "END Invalid email format. Please try again.";
-                    } else {
-                        // Create new user
-                        $userId = Capsule::table('users')->insertGetId([
-                            'name' => $level[1],
-                            'email' => $level[2],
-                            'phone' => $phoneNumber,
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now()
-                        ]);
-                        
-                        $response = "CON Registration successful!\n";
-                        $response .= "1. Check Balance\n";
-                        $response .= "2. Add Income\n";
-                        $response .= "3. Add Expense\n";
-                        $response .= "4. View Transactions\n";
-                        $response .= "5. Manage Categories\n";
-                        $response .= "6. Exit";
-                    }
+                    // Create new user
+                    $userId = Capsule::table('users')->insertGetId([
+                        'name' => $level[1],
+                        'email' => $level[2],
+                        'phone' => $phoneNumber,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now()
+                    ]);
+                    
+                    $response = "CON Registration successful!\n";
+                    $response .= "1. Check Balance\n";
+                    $response .= "2. Add Income\n";
+                    $response .= "3. Add Expense\n";
+                    $response .= "4. View Transactions\n";
+                    $response .= "5. Manage Categories\n";
+                    $response .= "6. Exit";
                 }
             } else {
-                $response = "END Thank you for using Student Finance Tracker";
+                $response = "END Thank you for using  Student Finance Tracker";
             }
         } else {
             switch ($level[0]) {
@@ -389,10 +355,10 @@ function handleUssdRequest($sessionId, $serviceCode, $phoneNumber, $text) {
                     } elseif (count($level) == 2) {
                         $response = "CON Enter income amount:";
                     } elseif (count($level) == 3) {
-                        if (!validateAmount($level[2])) {
-                            $response = "END Invalid amount format. Please enter a positive number with up to 2 decimal places.";
+                        $amount = floatval($level[2]);
+                        if ($amount <= 0) {
+                            $response = "END Invalid amount. Please try again.";
                         } else {
-                            $amount = floatval($level[2]);
                             // Get selected category
                             $categoryIndex = intval($level[1]) - 1;
                             $category = Capsule::table('categories')
